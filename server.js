@@ -1,5 +1,6 @@
-// WebSocket client interface
-export interface WebSocketClient extends WebSocket {
+// WebSocket client interface for Deno
+export interface WebSocketClient {
+  socket: WebSocket;
   playerId?: string;
   isAdmin?: boolean;
   deviceInfo?: any;
@@ -85,11 +86,12 @@ export interface Payment {
   transactionId?: string;
 }
 
-// Database connection interface (for Deno KV or similar)
+// Database connection interface for Deno KV
 export interface Database {
   players: Map<string, Player>;
   rooms: Map<string, Room>;
   payments: Map<string, Payment>;
+  kv?: Deno.Kv; // Optional Deno KV instance
 }
 
 // Connection manager interface
@@ -177,4 +179,75 @@ export interface HeartbeatMessage {
   type: 'ping' | 'pong';
   timestamp: number;
   playerId?: string;
+}
+
+// WebSocket message handler type for Deno
+export type WebSocketMessageHandler = (
+  ws: WebSocket,
+  data: string | Uint8Array,
+  client: WebSocketClient
+) => Promise<void> | void;
+
+// WebSocket event handlers for Deno
+export interface WebSocketHandlers {
+  onOpen?: (ws: WebSocket, client: WebSocketClient) => void;
+  onMessage?: WebSocketMessageHandler;
+  onClose?: (ws: WebSocket, client: WebSocketClient) => void;
+  onError?: (ws: WebSocket, error: Error, client: WebSocketClient) => void;
+}
+
+// Server configuration for Deno
+export interface ServerConfig {
+  port: number;
+  hostname?: string;
+  certFile?: string;
+  keyFile?: string;
+  maxConnections?: number;
+  pingInterval?: number;
+  timeout?: number;
+}
+
+// Authentication token interface
+export interface AuthToken {
+  playerId: string;
+  name: string;
+  isAdmin: boolean;
+  iat: number;
+  exp: number;
+}
+
+// Room creation options
+export interface RoomOptions {
+  gameType: string;
+  stake: number;
+  maxPlayers?: number;
+  password?: string;
+  isPrivate?: boolean;
+}
+
+// Player statistics
+export interface PlayerStats {
+  totalGames: number;
+  gamesWon: number;
+  totalWon: number;
+  totalPaid: number;
+  winRate: number;
+  favoriteGame: string;
+}
+
+// Game pattern interface
+export interface GamePattern {
+  name: string;
+  description: string;
+  positions: number[][]; // Coordinates or positions on the ticket
+}
+
+// Ticket interface for Housie/Tambola
+export interface Ticket {
+  id: string;
+  playerId: string;
+  roomId: string;
+  numbers: number[][]; // 3x9 grid with numbers
+  marked: boolean[][]; // 3x9 grid for marked numbers
+  createdAt: Date;
 }
