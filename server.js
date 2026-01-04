@@ -83,3 +83,98 @@ export interface Payment {
   method: string;
   status: 'pending' | 'completed' | 'failed';
   transactionId?: string;
+}
+
+// Database connection interface (for Deno KV or similar)
+export interface Database {
+  players: Map<string, Player>;
+  rooms: Map<string, Room>;
+  payments: Map<string, Payment>;
+}
+
+// Connection manager interface
+export interface ConnectionManager {
+  clients: Map<string, WebSocketClient>;
+  rooms: Map<string, Set<string>>; // roomId -> Set of playerIds
+  admins: Set<string>;
+}
+
+// Game state interface
+export interface GameState {
+  calledNumbers: number[];
+  winners: Winner[];
+  isActive: boolean;
+  lastCalled?: number;
+}
+
+// Broadcast message interface
+export interface BroadcastMessage {
+  type: string;
+  roomId: string;
+  data: any;
+  timestamp: number;
+}
+
+// Error response interface
+export interface ErrorResponse {
+  type: 'error';
+  message: string;
+  code?: string;
+  timestamp: number;
+}
+
+// Success response interface
+export interface SuccessResponse {
+  type: 'success';
+  message: string;
+  data?: any;
+  timestamp: number;
+}
+
+// Join room request interface
+export interface JoinRoomRequest {
+  type: 'join';
+  roomId: string;
+  playerId: string;
+  name: string;
+  phone: string;
+  stake: number;
+}
+
+// Mark number request interface
+export interface MarkNumberRequest {
+  type: 'mark';
+  number: number;
+  playerId: string;
+  roomId: string;
+}
+
+// Call number request interface (admin only)
+export interface CallNumberRequest {
+  type: 'call';
+  number: number;
+  roomId: string;
+  adminId: string;
+}
+
+// Create room request interface
+export interface CreateRoomRequest {
+  type: 'create';
+  gameType: string;
+  stake: number;
+  adminId: string;
+}
+
+// Leave room request interface
+export interface LeaveRoomRequest {
+  type: 'leave';
+  playerId: string;
+  roomId: string;
+}
+
+// Ping/Pong interface for keep-alive
+export interface HeartbeatMessage {
+  type: 'ping' | 'pong';
+  timestamp: number;
+  playerId?: string;
+}
