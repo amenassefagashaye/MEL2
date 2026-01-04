@@ -1,11 +1,11 @@
-// WebSocket client interface
-export interface WebSocketClient extends WebSocket {
+// WebSocket client type (Deno-safe)
+export type WebSocketClient = WebSocket & {
   playerId?: string;
   isAdmin?: boolean;
-  deviceInfo?: any;
+  deviceInfo?: unknown;
   lastPing?: number;
   lastPong?: number;
-}
+};
 
 // Player interface
 export interface Player {
@@ -66,13 +66,13 @@ export interface GameConfig {
 // Message interface
 export interface Message {
   type: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 // Admin command interface
 export interface AdminCommand {
   command: string;
-  data?: any;
+  data?: unknown;
   timestamp: Date;
 }
 
@@ -81,6 +81,6 @@ export interface Payment {
   playerId: string;
   amount: number;
   method: string;
-  status: 'pending' | 'completed' | 'failed';
+  status: "pending" | "completed" | "failed";
   transactionId?: string;
 }
